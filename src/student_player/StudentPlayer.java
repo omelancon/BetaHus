@@ -4,8 +4,10 @@ import hus.HusBoardState;
 import hus.HusPlayer;
 import hus.HusMove;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Random;
+import java.lang.Math;
 
 import student_player.mytools.MyTools;
 
@@ -20,10 +22,21 @@ public class StudentPlayer extends HusPlayer {
 
     private int player_id = 0;
     private int depth_of_search = 1;
+    private int second_phase_size = 3;
 
     // Parameters for board value heuristic
     private double GREED = 1.0; // Value given to a seed
     private double LIBERTY_DESIRE = 1.0;  // Value given to a legal move
+
+    private class MoveWithScore {
+      public double score;
+      public HusMove move;
+
+      public MoveWithScore(double score, HusMove move){
+        this.score = score;
+        this.move = move;
+      }
+    }
 
     /** This is the primary method that you need to implement.
      * The ``board_state`` object contains the current state of the game,
@@ -110,25 +123,76 @@ public class StudentPlayer extends HusPlayer {
     }
 
     private HusMove alpha_beta_pruning (HusBoardState board_state, int depth){
-      /* Applies standard alpha-beta pruning to a given depth and return
-       * the best move.
+      /* Applies standard alpha-beta pruning to a given depth
+       * to a specified depth and explores the best moves a little deeper
       */
 
-      ArrayList<HusMove> moves = board_state.getLegalMoves();
-      double score = Double.MIN_VALUE;
+      // Instanciate score an minimum desired score
+      double min_score = Double.MIN_VALUE;
       double move_score;
 
-      HusMove best_move = new HusMove();
+      // Get the legal moves
+      ArrayList<HusMove> moves = board_state.getLegalMoves();
 
+      // Calculate how many moves will be analyzed deeper in second phase
+      // and instanciate the array to store them
+      int moves_in_second_phase =  Math.min(this.second_phase_size, moves.size());
+      MoveWithScore[] second_phases = new MoveWithScore[moves_in_second_phase];
+
+      // Instanciate a default move, this is needed in case there is no legal move
+      HusMove best_move = new HusMove();
+      double best_score = Double.MIN_VALUE;
+
+      // Instanciate a copy of the current board to try moves
+      HusBoardState opponent_board_state;
+
+      // Get score of each move
       for (HusMove move : moves){
-        HusBoardState opponent_board_state = (HusBoardState) board_state.clone();
+
+        // The board must be cloned to allow moves to be tested
+        opponent_board_state = (HusBoardState) board_state.clone();
         opponent_board_state.move(move);
 
-        move_score = get_value_after_player(opponent_board_state, depth, score);
+        // Start recursion
+        move_score = get_value_after_player(opponent_board_state, depth, min_score);
 
-        if (move_score >= score){
+        // Format the move to be stored with its score
+        MoveWithScore move_with_score = new MoveWithScore(move_score, move);
+        MoveWithScore tmp_move_with_score;
+
+        // Push the move as a tuple (score, move) into the ordered second phase
+        // moves list
+        for (int i = 0; i < moves_in_second_phase; i++){
+          if (second_phases[i] == null){
+            second_phases[i] = move_with_score;
+            break;
+          }
+          else if (move_with_score.score > second_phases[i].score) {
+            // Push the move in the list from that point
+            tmp_move_with_score = second_phases[i];
+            second_phases[i] = move_with_score;
+            move_with_score = tmp_move_with_score;
+          }
+        }
+
+        // If we filled the array, we expect a minimum score for minimax
+        if (second_phases[moves_in_second_phase] != null) {
+          min_score = second_phases[moves_in_second_phase].score;
+        }
+      }
+
+      // Search best found moves on step deeper
+      for (HusMove move : moves) {
+        // Play th emove
+        opponent_board_state = (HusBoardState) board_state.clone();
+        opponent_board_state.move(move);
+
+        // Get the score
+        move_score = get_value_after_player(opponent_board_state, this.depth_of_search + 1, best_score);
+
+        if (move_score >= best_score){
           best_move = move;
-          score = move_score;
+          best_score = move_score;
         }
       }
 
