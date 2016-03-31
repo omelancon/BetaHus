@@ -1,0 +1,31 @@
+# Server version 0.08 running on olivier-ThinkPad-T450:8123
+# Game ID: 37
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Tue Mar 29 15:55:46 EDT 2016
+# Player 1: Player-0, '260523926', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260523926
+START Player-1 RandomHusPlayer
+PIT 0 10
+PIT 1 1
+PIT 0 22
+PIT 1 0
+PIT 0 0
+PIT 1 22
+PIT 0 1
+PIT 1 7
+PIT 0 17
+PIT 1 11
+PIT 0 23
+PIT 1 17
+PIT 0 3
+PIT 1 20
+PIT 0 6
+PIT 1 16
+PIT 0 27
+PIT 1 24
+PIT 0 19
+GAMEOVER WINNER 0
+# Game ended: Tue Mar 29 15:56:02 EDT 2016

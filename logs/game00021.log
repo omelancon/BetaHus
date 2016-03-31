@@ -1,0 +1,44 @@
+# Server version 0.08 running on olivier-ThinkPad-T450:8123
+# Game ID: 21
+# Board class: hus.HusBoard
+# Timeout: 2000
+# First Move Timeout: 30000
+# Date: Tue Mar 29 15:35:29 EDT 2016
+# Player 1: Player-0, '260523926', running on localhost
+# Player 2: Player-1, 'RandomHusPlayer', running on localhost
+START Player-0 260523926
+START Player-1 RandomHusPlayer
+PIT 0 14
+PIT 1 23
+PIT 0 3
+PIT 1 20
+PIT 0 7
+PIT 1 17
+PIT 0 4
+PIT 1 18
+PIT 0 1
+PIT 1 15
+PIT 0 9
+PIT 1 5
+PIT 0 12
+PIT 1 29
+PIT 0 13
+PIT 1 9
+PIT 0 2
+PIT 1 27
+PIT 0 18
+PIT 1 19
+PIT 0 17
+PIT 1 31
+PIT 0 11
+PIT 1 23
+PIT 0 25
+PIT 1 30
+PIT 0 19
+PIT 1 18
+PIT 0 24
+PIT 1 27
+PIT 0 25
+PIT 1 14
+PIT 0 2
+PIT 1 19
