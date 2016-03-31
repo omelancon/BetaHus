@@ -137,11 +137,15 @@ public class StudentPlayer extends HusPlayer {
       // Calculate how many moves will be analyzed deeper in second phase
       // and instanciate the array to store them
       int moves_in_second_phase =  Math.min(this.second_phase_size, moves.size());
-      MoveWithScore[] second_phases = new MoveWithScore[moves_in_second_phase];
+      MoveWithScore[] second_phase = new MoveWithScore[moves_in_second_phase];
 
       // Instanciate a default move, this is needed in case there is no legal move
       HusMove best_move = new HusMove();
       double best_score = Double.MIN_VALUE;
+
+      // In extreme case (not enough ressources or bad config) we just play a
+      // random move instead of raising an exception
+      if (moves_in_second_phase <= 0) { return (HusMove) board_state.getRandomMove(); }
 
       // Instanciate a copy of the current board to try moves
       HusBoardState opponent_board_state;
@@ -163,27 +167,31 @@ public class StudentPlayer extends HusPlayer {
         // Push the move as a tuple (score, move) into the ordered second phase
         // moves list
         for (int i = 0; i < moves_in_second_phase; i++){
-          if (second_phases[i] == null){
-            second_phases[i] = move_with_score;
+          if (second_phase[i] == null){
+            second_phase[i] = move_with_score;
             break;
           }
-          else if (move_with_score.score > second_phases[i].score) {
+          else if (move_with_score.score > second_phase[i].score) {
             // Push the move in the list from that point
-            tmp_move_with_score = second_phases[i];
-            second_phases[i] = move_with_score;
+            tmp_move_with_score = second_phase[i];
+            second_phase[i] = move_with_score;
             move_with_score = tmp_move_with_score;
           }
         }
 
         // If we filled the array, we expect a minimum score for minimax
-        if (second_phases[moves_in_second_phase - 1] != null) {
-          min_score = second_phases[moves_in_second_phase].score;
+        if (second_phase[moves_in_second_phase - 1] != null) {
+          min_score = second_phase[moves_in_second_phase - 1].score;
         }
       }
 
       // Search best found moves on step deeper
-      for (HusMove move : moves) {
-        // Play th emove
+      for (MoveWithScore move_w_score : second_phase) {
+
+        // Extract move from MoveWithScore objects
+        HusMove move = move_w_score.move;
+
+        // Play the emove
         opponent_board_state = (HusBoardState) board_state.clone();
         opponent_board_state.move(move);
 
