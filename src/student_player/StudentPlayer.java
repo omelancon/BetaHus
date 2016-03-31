@@ -176,7 +176,7 @@ public class StudentPlayer extends HusPlayer {
         }
 
         // If we filled the array, we expect a minimum score for minimax
-        if (second_phases[moves_in_second_phase] != null) {
+        if (second_phases[moves_in_second_phase - 1] != null) {
           min_score = second_phases[moves_in_second_phase].score;
         }
       }
